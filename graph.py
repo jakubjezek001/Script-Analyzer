@@ -37,13 +37,11 @@ class Graph:
         ranks = [r for n,r in ranking]
         cent_dict = dict([(self.lab[n],r) for n,r in ranking])
         m_centrality = sum(ranks)
-        if len(ranks) > 0:
+        if ranks:
             m_centrality = m_centrality/len(ranks)
         #Create a graph with the nodes above the cutoff centrality- remove the low centrality nodes
         thresh = F*m_centrality
-        lab = {}
-        for k in self.lab:
-            lab[k] = self.lab[k]
+        lab = {k: self.lab[k] for k in self.lab}
         g = Graph(self.adj.copy(),self.char_list)
         for n,r in ranking:
             if r < thresh:

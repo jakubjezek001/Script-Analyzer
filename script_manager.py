@@ -62,17 +62,14 @@ def get_scripts():
 #Setting count = N will return N random scripts
 #Specifiying a name will load only that script
 def load_scripts(path,count=None,name=None):
-    scripts = []
-    if not name is None:
+    if name is not None:
         return [(name,open(path+name).readlines())]
     files = os.listdir(path)
     if count is None:
         count = len(files)
     else:
         random.shuffle(files)
-    for sc_file in files[:count]:
-        scripts.append((sc_file,open(path+sc_file).readlines()))
-    return scripts
+    return [(sc_file,open(path+sc_file).readlines()) for sc_file in files[:count]]
 
 #Auxiliary method to remove all non-ASCII characters in text - cleans unknown characters
 def clean(text):

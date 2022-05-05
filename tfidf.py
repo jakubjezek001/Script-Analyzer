@@ -30,10 +30,7 @@ def preprocess(script):
             dialogue = dialogue+'\n'+line
         else:
             line = line.lower()
-            if line in char_list:
-                char_list[line] = char_list[line]+1
-            else:
-                char_list[line] = 1
+            char_list[line] = char_list[line]+1 if line in char_list else 1
     return (char_list,dialogue)
 
 class Tokenizer:
@@ -59,7 +56,7 @@ class TFIDF_Model:
     def __init__(self,path=None):
         self.count_vect = CountVectorizer(tokenizer=Tokenizer())
         self.vec = None
-        if not path is None:
+        if path is not None:
             self.load_model(path)
 
     #Train a TFIDF model
@@ -87,8 +84,20 @@ class TFIDF_Model:
 
     #Returns the keywords and their TFIDF scores along with a list of all characters in the script
     def get_keywords(self,script):
-        char_list = set([line.strip().lower() for line in script if ((line.strip() != sm.DESC_TAG) & (line.strip().isupper()))])
+        char_list = {
+            line.strip().lower()
+            for line in script
+            if ((line.strip() != sm.DESC_TAG) & (line.strip().isupper()))
+        }
+
         res = self.vec.transform(['\n'.join(script)])
         feature_names = self.vec.get_feature_names()
-        words = dict([(feature_names[col],res[0,col]) for col in res.nonzero()[1] if (not feature_names[col] in char_list)])
+        words = dict(
+            [
+                (feature_names[col], res[0, col])
+                for col in res.nonzero()[1]
+                if feature_names[col] not in char_list
+            ]
+        )
+
         return (list(char_list),words)
