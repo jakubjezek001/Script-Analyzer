@@ -38,14 +38,13 @@ class Scene_Extractor():
 
     #Returns a list of 3-tuples: (scene text, list of chars in scene,score)
     def get_char_scene(self,script,char_list,keys):
+        has_desc_tag = False
+        scene_text = []
+        scene_char = set
         scenes = []
         N = len(script)
         in_dialogue = False
-        has_desc_tag = False
-        i = 0
-        scene_text = []
-        scene_char = set
-        while (i < N):
+        for i in range(N):
             line = script[i].strip()
             if line == sm.DESC_TAG:
                 if in_dialogue:
@@ -60,7 +59,7 @@ class Scene_Extractor():
                                 key_count = key_count+1
                             w = w.lower()
                             if w in char_list:
-                                scene_char = scene_char.union(set([w]))
+                                scene_char = scene_char.union({w})
                     if key_count > 0:
                         score = score/key_count
                     scenes.append((scene_text,list(scene_char),score))
@@ -70,12 +69,11 @@ class Scene_Extractor():
                     in_dialogue = False
                     scene_text.append(line)
             elif line.isupper():
-                scene_char = scene_char.union(set([line.strip().lower()]))
+                scene_char = scene_char.union({line.strip().lower()})
                 in_dialogue = True
                 scene_text.append(line)
             else:
                 scene_text.append(line)
-            i = i+1
         self.merge_scenes(scenes)
         return scenes
 
@@ -89,7 +87,7 @@ class Scene_Extractor():
                 del scenes[i+1]
                 if i >= len(scenes)-1:
                     break
-            i = i+1
+            i += 1
     
     #Method to print out the main scenes of the script. Prints out N scenes with the highest mean TFIDF scores
     def main_scenes(self,script,N):

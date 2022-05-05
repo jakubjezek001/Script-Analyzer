@@ -75,7 +75,7 @@ class Reader():
                 del scenes[i+1]
                 if i >= len(scenes)-1:
                     break
-            i = i+1
+            i += 1
 
     #Returns the co-occurrence matrix based on character interaction in the whole script
     def occur_mat(self,char_list,scenes):
@@ -94,7 +94,7 @@ class Reader():
     #Displays the graph with all the characters and the pruned graph with only the main ones
     def show_all_and_main_char(self,script,F,centrality_type):
         char_list = list(self.extract_char(script))
-        if len(char_list) == 0:
+        if not char_list:
             return None
         scenes,g = self.char_graph(script,char_list)
         g.show()
@@ -104,7 +104,7 @@ class Reader():
     #Plots the centrality-vs-time graphs of the main characters extracted with the mean cutoff
     def centrality_trace(self,script,F=1,centrality_type='betweenness'):
         all_chars = list(self.extract_char(script))
-        if len(all_chars) == 0:
+        if not all_chars:
             return None
         cent_trace = dict([(c,[]) for c in all_chars])
         scene_details,g = self.char_graph(script,all_chars)
@@ -120,8 +120,7 @@ class Reader():
             for c in cent_dict:
                 cent_trace[c].append(cent_dict[c])
 
-        for char in cent_trace:
-            t = cent_trace[char]
+        for char, t in cent_trace.items():
             if sum(t)/len(t) > cent_thresh:
                 plt.title(char)
                 plt.plot(cent_trace[char])
